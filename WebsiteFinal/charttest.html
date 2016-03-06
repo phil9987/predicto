@@ -1,0 +1,253 @@
+<!DOCTYPE HTML>
+<html>
+
+  <head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  	<title>Highstock Example</title> 
+
+    <link rel="stylesheet" type="text/css" href="mystyle.css"> 
+
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
+
+  <script type="text/javascript">
+
+  var graph_color = 5;
+  var line_color = 'red';
+  var bar_date_from = Date.UTC(2016, 1, 18);
+  var bar_date_to   = Date.UTC(2016, 2, 3);
+
+  var good_col = 'rgba(71,160,73,0.85)';
+  var bad_col  = 'rgba(255,71,79,0.85)';
+  var mid_col  = 'rgba(176,199,231,0.85)';
+
+  var headline = "VW AG Stock";
+  var subline  = ""
+
+  $(function(){
+    $.getJSON('http://predicto.eu-gb.mybluemix.net/get_rating/vw/14',function (data){
+        var rating = data;
+
+        if(rating < 0.4)
+        {
+          graph_color = 5;
+          line_color  = 'red';
+        }
+        else if(rating > 0.6)
+        {
+          document.getElementById("mybutton").value = "HIGH";
+          graph_color = 2;
+          line_color  = 'green';
+        }
+        else
+        {
+          graph_color = 4;
+          line_color  = 'blue';
+        }
+    });
+  });
+
+
+  $(function () {
+    $.getJSON('http://predicto.eu-gb.mybluemix.net/get_graph_data/vw', function (data) {
+
+        $('#container').highcharts({
+            chart: {
+               
+            },
+            title: {
+                text: headline
+            },
+            subtitle: {
+                text: document.ontouchstart === undefined ?
+                        subline : 'EXAMPLE'
+            },
+            xAxis: {
+                type: 'datetime',
+                plotBands: [{
+                      color:  'rgba(68, 170, 213, .1)', // Color value
+                      from: bar_date_from,
+                      to: bar_date_to,
+                }],
+            },
+            yAxis: {
+                title: {
+                    text: 'Stock value USD'
+                }
+            },
+            legend: {
+                enabled: false
+            },
+            plotOptions: {
+                area: {
+                
+                    marker: {
+                        radius: 2
+                    },
+                    lineWidth: 1,
+                    states: {
+                        hover: {
+                            lineWidth: 1
+                        }
+                    },
+                    threshold: null
+                }
+            },
+
+            series: [{
+                color: bad_col,
+                type: 'area',
+                name: 'Stock value',
+                data: data
+            }]
+        });
+    });
+
+
+$('#vw_tablebutton').click(function () {
+        var chart = $('#container').highcharts();
+
+        $.getJSON('http://predicto.eu-gb.mybluemix.net/get_graph_data/vw',function (data){
+
+                  chart.setTitle({text: "VW AG stock"});
+                  chart.series[0].options.color = bad_col;   
+                  chart.series[0].update(chart.series[0].options);
+                  chart.series[0].setData(data);
+        });
+
+        $('#button').unbind('click');
+      });
+$('#apple_tablebutton').click(function () {
+        var chart = $('#container').highcharts();
+
+        $.getJSON('http://predicto.eu-gb.mybluemix.net/get_graph_data/apple',function (data){ 
+                  chart.series[0].options.color = good_col;   
+                  chart.setTitle({text: "Apple stock"});
+                  chart.series[0].setData(data);
+                  chart.series[0].update(chart.series[0].options);
+        });
+
+        $('#button').unbind('click');
+      });
+$('#boeing_tablebutton').click(function () {
+        var chart = $('#container').highcharts();
+
+        $.getJSON('http://predicto.eu-gb.mybluemix.net/get_graph_data/boeing',function (data){ 
+                  chart.series[0].options.color = mid_col;   
+                  chart.setTitle({text: "Boeing stock"});
+                  chart.series[0].setData(data);
+                  chart.series[0].update(chart.series[0].options);
+        });
+
+        $('#button').unbind('click');
+      });
+$('#nestle_tablebutton').click(function () {
+        var chart = $('#container').highcharts();
+
+        $.getJSON('http://predicto.eu-gb.mybluemix.net/get_graph_data/nestle',function (data){ 
+                  chart.series[0].options.color = mid_col;   
+                  chart.setTitle({text: "Nestle stock"});
+                  chart.series[0].setData(data);
+                  chart.series[0].update(chart.series[0].options);
+        });
+
+        $('#button').unbind('click');
+      });
+
+});
+
+  </script>
+
+</head>
+
+<body>
+
+  <script src="https://code.highcharts.com/stock/highstock.js"></script>
+  <script src="https://code.highcharts.com/stock/modules/exporting.js"></script>
+  <script src="https://code.highcharts.com/modules/data.js"></script>
+
+<form>
+                                <input class="search" type="text" placeholder="Search..." required>
+</form>
+
+<form>
+  <table id="tableId" class="flat-table">
+  <tbody>
+    <tr>
+      <th>Stock</th>
+      <th>Prediction</th>
+    </tr>
+
+    <tr>
+      <td id="vw_tablebutton">VW</td>
+      <td class="neg"> <img class="centered2" src="arrow_bot.png" alt="" width="40" /> </td>
+    </tr>
+
+    <tr>
+      <td id="apple_tablebutton">Apple</td>
+      <td class="pos"> <img class="centered2" src="arrow_top.png" alt="" width="40" /> </td>
+    </tr>
+
+    <tr>
+      <td id="boeing_tablebutton">Boeing</td>
+      <td class="neut"> <img class="centered2" src="arrow_mid.png" alt="" width="40" /> </td>
+    </tr>
+
+    <tr>
+      <td>Caterpillar</td>
+      <td class="pos"> <img class="centered2" src="arrow_top.png" alt="" width="40" /> </td>
+    </tr>
+
+    <tr>
+      <td>Cisco Systems</td>
+      <td class="neg"> <img class="centered2" src="arrow_bot.png" alt="" width="40" /></td>
+    </tr>
+
+    <tr>
+      <td id="nestle_tablebutton">Nestle</td>
+      <td class="neut"> <img class="centered2" src="arrow_mid.png" alt="" width="40" /> </td>
+    </tr>
+
+    <tr>
+      <td>IBM</td>
+      <td class="pos"> <img class="centered2" src="arrow_top.png" alt="" width="40" /> </td>
+    </tr>
+
+    <tr>
+      <td>Intel</td>
+      <td class="pos"> <img class="centered2" src="arrow_top.png" alt="" width="40" /> </td>
+    </tr>
+
+    <tr>
+      <td>Nike</td>
+      <td class="neg"> <img class="centered2" src="arrow_bot.png" alt="" width="40" /> </td>
+    </tr>
+
+    <tr>
+      <td>Microsoft</td>
+      <td class="neg"> <img class="centered2" src="arrow_bot.png" alt="" width="40" /> </td>
+    </tr>
+
+    <tr>
+      <td>Visa</td>
+      <td class="neut"> <img class="centered2" src="arrow_mid.png" alt="" width="40" /> </td>
+    </tr>
+
+    <tr>
+      <td>Walmart</td>
+      <td class="pos"> <img class="centered2" src="arrow_top.png" alt="" width="40" /> </td>
+    </tr>
+
+  </tbody>
+  </table> 
+</form>
+
+  <div class="right_wing" id="container" style="height: 400px; width: 500px"></div>
+
+  <img class="top_pic" src="predicto_logo.png" width="400"/>
+
+<img class="ibmlogo" src="IBMLogo.png" width="150"/>
+
+  
+</body>
+
+</html>
